@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+app.controller('specificationController',function($scope,$controller,specificationService){
+	$controller('baseController',{$scope:$scope});
+	$scope.searchEntity={};
+	$scope.entity={};
+	$scope.search=function(page,rows){
+		specificationService.search(page,rows,$scope.searchEntity).success(
+				function(a){
+					$scope.list=a.rows;	
+					$scope.paginationConf.totalItems=a.total;
+				});	
+		}
+	$scope.save=function(){
+		specificationService.add($scope.entity).success(
+				function(a){
+				if(a){
+					$scope.reloadList();
+				}else{
+					alert("编辑失败!")
+				}
+		});
+	}
+	$scope.show=function(id){
+		specificationService.show(id).success(
+				function(a){
+					console.log(a);
+					$scope.entity.specificationOptionList=a.specificationOptionList;
+					$scope.entity.specification=a.specification;
+				
+		});
+	}
+	$scope.del=function(){
+		specificationService.del($scope.ids).success(
+				function(a){
+						if(a){
+							$scope.reloadList();
+						}
+				
+		});
+	}
+	$scope.addTableRow=function(){
+		
+		$scope.entity.specificationOptionList.push({});
+	}
+	$scope.deleTableRow=function(index){			
+		$scope.entity.specificationOptionList.splice(index,1);//删除			
+	} 
+
+})

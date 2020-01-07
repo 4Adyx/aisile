@@ -1,0 +1,65 @@
+/**
+ * 
+ */
+app.controller('typeController',function($scope,$controller,typeService,brandService,specificationService){
+	$controller('baseController',{$scope:$scope});
+	$scope.searchEntity={};
+	$scope.search=function(page,rows){
+		typeService.search(page,rows,$scope.searchEntity).success(
+				function(a){
+					$scope.list=a.rows;	
+					$scope.paginationConf.totalItems=a.total;
+				});	
+		}
+	$scope.save=function(){
+		typeService.add($scope.entity).success(
+				function(a){
+				if(a){
+					$scope.reloadList();
+				}else{
+					alert("编辑失败!")
+				}
+		});
+	}
+	$scope.show=function(id){
+		typeService.show(id).success(
+				function(a){
+					$scope.entity=a;
+					$scope.entity.brandIds=JSON.parse($scope.entity.brandIds);//转换品牌列表
+					$scope.entity.specIds=JSON.parse($scope.entity.specIds);//转换规格列表
+					$scope.entity.customAttributeItems= JSON.parse($scope.entity.customAttributeItems);//转换扩展属性
+
+				
+		});
+	}
+	$scope.del=function(){
+		typeService.del($scope.ids).success(
+				function(a){
+						if(a){
+							$scope.reloadList();
+						}
+				
+		});
+	}
+	$scope.specList={data:[]};
+	$scope.selectSpecList=function(){
+		specificationService.selectSpecList().success(
+				function(a){
+					$scope.specList={data:a}
+				});
+	}
+	$scope.brandList={data:[]};
+	$scope.selectOptionList=function(){
+		brandService.selectOptionList().success(
+				function(a){
+					$scope.brandList={data:a}
+				});
+	}
+	$scope.addTableRow=function(){
+		$scope.entity.customAttributeItems.push({});
+	}
+	$scope.deleTableRow=function(index){			
+		$scope.entity.customAttributeItems.splice(index,1);//删除			
+	} 
+
+})

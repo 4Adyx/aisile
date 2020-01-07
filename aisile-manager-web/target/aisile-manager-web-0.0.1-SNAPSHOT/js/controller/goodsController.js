@@ -1,0 +1,55 @@
+/**
+ * 
+ */
+app.controller('goodsController',function($scope,$controller,itemCatService,goodsService){
+	$controller('baseController',{$scope:$scope});
+	$scope.status=['未审核','已审核','审核未通过','关闭'];//商品状态
+	$scope.status1=['上架','下架'];
+	$scope.entity={};
+	//$scope.searchEntity={};
+	$scope.itemCatList=[];//商品分类列表
+	//查询商品分类
+	$scope.findItemCatList=function(){
+		itemCatService.findAll().success(
+			function(response){
+				for(var i=0;i<response.length;i++){
+					$scope.itemCatList[response[i].id ]=response[i].name;		
+				}					
+			}		
+		);		
+	}
+	$scope.search=function(page,rows){
+		goodsService.search(page,rows,$scope.searchEntity).success(function(a){
+			$scope.list=a.rows;
+			$scope.paginationConf.totalItems=a.total;
+		})
+	}
+	$scope.show=function(id){
+		goodsService.show(id).success(function(a){
+			$scope.entity=a;
+		})
+	}
+	$scope.examine=function(){
+		goodsService.examine($scope.ids).success(function(a){
+			$scope.reloadList();
+		})
+	}
+	$scope.reject=function(){
+		goodsService.reject($scope.ids).success(function(a){
+			$scope.reloadList();
+		})
+	}
+	$scope.del=function(){
+		goodsService.del($scope.ids).success(function(a){
+			$scope.reloadList();
+		})
+	}
+	$scope.updateStatus=function(entity){
+		goodsService.updateStatus(entity
+				).success(function(a){
+			$scope.reloadList();
+		})
+	}
+	
+
+})
